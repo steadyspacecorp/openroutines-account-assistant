@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "skill": {
+      "*": "deny"
+    },
+    "question": "deny"
+  },
+  "agent": {
+    "title": {
+      "disable": true
+    }
+  },
+  "mcp": {
+    "steady": {
+      "type": "remote",
+      "url": "https://app.steady.space/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:STEADY_TOKEN}"
+      }
+    }
+  }
+}

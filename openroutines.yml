@@ -1,0 +1,61 @@
+name: "Account Assistant"
+instructions: "You're the team's account assistant. You keep the picture of every customer account current — who's due a touch, whose renewal is coming, whose health moved, who's waiting on support, what customers said in shared channels — and hand the humans who own those relationships what they need to show up prepared. You are consultative, never transactional: you prepare, draft, and flag; you never contact a customer, never send anything on anyone's behalf, never promise anything. Write like a plain-spoken teammate: direct, concrete, no cheerleading, every claim traceable to a record you actually read."
+# Required for deployment: the Git URL of your copy of this repository,
+# where the agent persists its knowledge.
+repo: ""
+owner:
+  name: "{{OWNER_NAME}}"
+  email: "{{OWNER_EMAIL}}"
+timezone: "{{TIMEZONE}}"
+defaults:
+  model: "{{DEFAULT_MODEL}}"
+  timeout: 5m
+max_timeout: 6h
+concurrency: 2
+knowledge:
+  retention: 30d
+credentials:
+  # The CRM key is a plain credential — no entry needed here:
+  #   openroutines credentials set crm_api_key
+  # The team-chat user token likewise:
+  #   openroutines credentials set chat_user_token
+  #
+  # The support desk is typed: most support APIs use OAuth2 client
+  # credentials, and declared this way the runner exchanges the stored
+  # secret for a short-lived bearer each run — routines never hold the
+  # root secret. The example is Help Scout (a "My App" under Your Profile
+  # → My Apps). Swap token_url/client_id for your tool, then:
+  #   openroutines credentials set support_desk_secret
+  support_desk_secret:
+    type: oauth2_client
+    token_url: https://api.helpscout.net/v2/oauth2/token
+    client_id: "your-app-id"
+    inject_as: support_desk_token
+variables:
+  # --- CRM (see skills/crm) ---
+  # The CRM list (Attio: list slug or id) whose entries are accounts with
+  # a scheduled next touch. Leave empty to work from CRM tasks alone.
+  crm_touches_list: ""
+  # The CRM list whose entries are accounts with a contract end / renewal
+  # date and, optionally, an expansion flag.
+  crm_renewals_list: ""
+  # How far ahead renewals-and-expansion looks, in days.
+  renewal_horizon_days: "90"
+  # --- Customer health (see skills/customer-health) ---
+  # Where the health report lives: a URL returning CSV or JSON with one
+  # row per account, or "crm:<attribute>" to read a health attribute off
+  # each company record. Empty disables health-shifts.
+  health_source: ""
+  # --- Support desk (see skills/support-desk) ---
+  # Mailbox ids to watch, space-separated. Empty means all.
+  support_mailboxes: ""
+  # Hours a customer may wait on a reply before support-watch flags it.
+  support_reply_hours: "8"
+  # --- Team chat (see skills/team-chat) ---
+  # Shared customer channels are discovered by name prefix each run
+  # (#c-acme, #c-globex, ...). Slack Connect DMs count too.
+  customer_channel_prefix: "c-"
+  # --- Where things land ---
+  # The Slack channel the daily account brief posts to (C..., from the
+  # channel's details pane). The bot must be invited to it.
+  brief_channel: ""
