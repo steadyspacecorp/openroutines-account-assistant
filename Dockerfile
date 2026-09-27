@@ -48,7 +48,7 @@ ENV HOME=/home/agent
 
 FROM base AS agent
 # The framework pin, kept in lockstep with .openroutines/version by `openroutines update`.
-ARG OPENROUTINES_VERSION=v0.1.2
+ARG OPENROUTINES_VERSION=v0.1.6
 RUN curl -fsSL https://get.openroutines.dev/install.sh | OPENROUTINES_INSTALL_DIR=/usr/local/bin bash
 COPY --chown=agent . /agent
 
